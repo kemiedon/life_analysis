@@ -13,30 +13,284 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; }
-        .hero-section { background: linear-gradient(rgba(26,26,46,0.85), rgba(22,33,62,0.85)), url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&h=400&fit=crop') center/cover; color: white; padding: 60px 20px; text-align: center; }
-        .hero-section h1 { font-size: 3em; font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
-        .hero-section p { font-size: 1.3em; color: #d4af37; text-shadow: 1px 1px 4px rgba(0,0,0,0.5); }
-        .main-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-        .form-section, .report-section { background: white; border-radius: 15px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 40px; }
-        .form-section h2 { color: #1a1a2e; margin-bottom: 30px; font-weight: 700; font-size: 1.8em; }
-        .form-group label { font-weight: 600; color: #16213e; margin-bottom: 8px; }
-        .form-group input, .form-group select { border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px 15px; width: 100%; }
-        .form-group input:focus, .form-group select:focus { border-color: #d4af37; box-shadow: 0 0 10px rgba(212,175,55,0.3); }
-        .btn-generate { background: linear-gradient(135deg, #d4af37 0%, #c19a1a 100%); color: #1a1a2e; border: none; padding: 14px 40px; font-weight: 700; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 20px; }
-        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(212,175,55,0.4); }
-        .report-section { display: none; }
-        .report-section.active { display: block; }
-        .report-section h1 { color: #1a1a2e; border-bottom: 4px solid #d4af37; padding-bottom: 15px; margin-bottom: 30px; font-size: 2.2em; }
-        .report-section h2 { color: #16213e; margin-top: 30px; margin-bottom: 15px; font-size: 1.6em; padding-left: 15px; border-left: 4px solid #d4af37; }
-        .report-section p { color: #555; line-height: 1.8; margin-bottom: 15px; }
-        .action-box { background: linear-gradient(135deg, #f8f9ff 0%, #f0f0f5 100%); border-left: 4px solid #d4af37; padding: 20px; margin: 20px 0; border-radius: 8px; }
-        .btn-export { background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); color: #d4af37; border: none; padding: 12px 30px; font-weight: 700; border-radius: 8px; cursor: pointer; margin-top: 30px; margin-right: 10px; }
-        .btn-export:hover { color: #f0f0f5; transform: translateY(-2px); }
-        .info-section { background: linear-gradient(rgba(26,26,46,0.9), rgba(15,52,96,0.9)), url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=300&fit=crop') center/cover; color: white; padding: 50px 20px; text-align: center; margin: 40px 0; border-radius: 15px; }
-        .info-section h3 { color: #d4af37; font-size: 2em; margin-bottom: 20px; }
-        @media (max-width: 768px) { .hero-section h1 { font-size: 2em; } .form-section, .report-section { padding: 20px; } }
+        
+        /* ========== 新色彩系統定義 ========== */
+        :root {
+            --midnight-indigo: #191970;
+            --charcoal-gray: #2C3E50;
+            --amethyst-purple: #6A5ACD;
+            --platinum-silver: #C0C0C0;
+            --turquoise-accent: #40E0D0;
+        }
+        
+        /* ========== 背景與主體優化 ========== */
+        body {
+            background: linear-gradient(135deg, var(--midnight-indigo) 0%, var(--charcoal-gray) 50%, #0f3460 100%);
+            color: var(--platinum-silver);
+            letter-spacing: 0.5px;
+        }
+        
+        /* ========== HERO區段 - 神祕大門 ========== */
+        .hero-section {
+            background: linear-gradient(
+                135deg, 
+                rgba(25, 25, 112, 0.9) 0%,
+                rgba(44, 62, 80, 0.85) 50%,
+                rgba(25, 25, 112, 0.9) 100%
+            );
+            box-shadow: 
+                inset 0 0 60px rgba(106, 90, 205, 0.1),
+                0 8px 32px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid var(--amethyst-purple);
+        }
+        
+        .hero-section h1 {
+            color: var(--platinum-silver);
+            text-shadow: 
+                0 0 20px rgba(106, 90, 205, 0.4),
+                0 0 40px rgba(64, 224, 208, 0.2),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 2px;
+        }
+        
+        .hero-section p {
+            color: var(--turquoise-accent);
+            text-shadow: 0 0 10px rgba(64, 224, 208, 0.3);
+        }
+        
+        /* ========== 表單區段 - 優化設計 ========== */
+        .form-section, .report-section {
+            background: linear-gradient(135deg, 
+                rgba(44, 62, 80, 0.95) 0%, 
+                rgba(25, 25, 112, 0.9) 100%);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(192, 192, 192, 0.1);
+            border: 1px solid rgba(106, 90, 205, 0.3);
+            border-top: 3px solid var(--amethyst-purple);
+        }
+        
+        .form-section h2 {
+            color: var(--platinum-silver);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: 1px;
+        }
+        
+        .form-section h2 i {
+            color: var(--turquoise-accent);
+            text-shadow: 0 0 10px rgba(64, 224, 208, 0.4);
+        }
+        
+        /* ========== 表單輸入欄位 - 深度設計 ========== */
+        .form-group input, .form-group select {
+            background: rgba(44, 62, 80, 0.6);
+            color: var(--platinum-silver);
+            border: 2px solid rgba(106, 90, 205, 0.4);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--turquoise-accent);
+            background: rgba(44, 62, 80, 0.8);
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                0 0 16px rgba(64, 224, 208, 0.3),
+                0 0 8px rgba(106, 90, 205, 0.2);
+            outline: none;
+        }
+        
+        /* ========== 按鈕 - 漸變效果 ========== */
+        .btn-generate {
+            background: linear-gradient(135deg, var(--amethyst-purple) 0%, var(--turquoise-accent) 100%);
+            color: var(--midnight-indigo);
+            box-shadow: 0 4px 16px rgba(106, 90, 205, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 28px rgba(106, 90, 205, 0.6),
+                0 0 30px rgba(64, 224, 208, 0.3);
+        }
+        
+        /* ========== 報告區段 ========== */
+        .report-section {
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(192, 192, 192, 0.1);
+        }
+        
+        #report-output h1 {
+            color: var(--turquoise-accent);
+            border-bottom: 3px solid var(--amethyst-purple);
+            text-shadow: 0 0 10px rgba(64, 224, 208, 0.2);
+        }
+        
+        #report-output h2 {
+            color: var(--amethyst-purple);
+            padding-left: 16px;
+            border-left: 4px solid var(--turquoise-accent);
+            text-shadow: 0 0 8px rgba(106, 90, 205, 0.2);
+        }
+        
+        #report-output strong {
+            color: var(--turquoise-accent);
+            font-weight: 700;
+        }
+        
+        /* ========== 導出按鈕 - 炫彩效果 ========== */
+        .btn-export {
+            background: rgba(64, 224, 208, 0.1);
+            color: var(--turquoise-accent);
+            border: 2px solid var(--turquoise-accent);
+            transition: all 0.3s;
+        }
+        
+        .btn-export:hover {
+            background: rgba(64, 224, 208, 0.2);
+            box-shadow: 0 0 16px rgba(64, 224, 208, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* ========== Q&A 聊天區段 ========== */
+        .qa-section {
+            background: linear-gradient(135deg, 
+                rgba(44, 62, 80, 0.95) 0%, 
+                rgba(25, 25, 112, 0.9) 100%);
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(106, 90, 205, 0.3);
+            display: none;
+        }
+        
+        .qa-section.active {
+            display: block;
+            animation: slideInUp 0.6s ease-out;
+        }
+        
+        .qa-section h3 {
+            color: var(--turquoise-accent);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chat-messages {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid rgba(106, 90, 205, 0.2);
+        }
+        
+        .chat-user-message {
+            background: var(--amethyst-purple);
+            color: white;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            margin-left: auto;
+            width: fit-content;
+            max-width: 70%;
+            display: block;
+            clear: both;
+        }
+        
+        .chat-model-message {
+            background: rgba(64, 224, 208, 0.1);
+            color: var(--platinum-silver);
+            border-left: 3px solid var(--turquoise-accent);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            margin-right: auto;
+            width: fit-content;
+            max-width: 70%;
+            display: block;
+            clear: both;
+        }
+        
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid rgba(106, 90, 205, 0.4);
+            border-radius: 8px;
+            background: rgba(44, 62, 80, 0.6);
+            color: var(--platinum-silver);
+            transition: all 0.3s;
+        }
+        
+        .chat-input-area input:focus {
+            border-color: var(--turquoise-accent);
+            box-shadow: 0 0 12px rgba(64, 224, 208, 0.3);
+            outline: none;
+        }
+        
+        .chat-send-button {
+            padding: 12px 24px;
+            background: var(--turquoise-accent);
+            color: var(--midnight-indigo);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        
+        .chat-send-button:hover:not(:disabled) {
+            box-shadow: 0 0 16px rgba(64, 224, 208, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .chat-send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* ========== 錯誤訊息 ========== */
+        .error-message {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #ff6b6b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error-message:not(.hidden) {
+            display: block;
+        }
+        
+        /* ========== 動畫效果 ========== */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -138,108 +392,366 @@
     <script>
         document.getElementById('ziwei-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const birthdate = document.getElementById('birthdate').value;
-            const birthtime = document.getElementById('birthtime').value;
-            const gender = document.getElementById('gender').value;
-            const birthplace = document.getElementById('birthplace').value;
+                // Global variables from Canvas environment (MUST BE USED)
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const apiKey = "AIzaSyAP6pvtjLSMTwNqP5vNZGmYwAVacFJMMiA"; // API key is provided by the canvas environment
+
+    // Gemini API Configuration
+    const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+
+    // DOM Elements
+    const button = document.getElementById('analyzeButton');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const reportOutput = document.getElementById('report-output');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // New Q&A Elements and State
+    const qaFeature = document.getElementById('qa-feature');
+    const chatInput = document.getElementById('chat-input');
+    const chatSendButton = document.getElementById('chat-send-button');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatError = document.getElementById('chatError');
+
+    let currentProfileData = null; // Stores user data and age for Q&A context
+    let chatHistory = []; // Stores the ongoing conversation
+
+    // Enable sending message on Enter key press
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !chatSendButton.disabled) {
+            handleQuickQuery();
+        }
+    });
+
+    /**
+     * 計算年齡
+     * @param {string} birthDateString - YYYY-MM-DD 格式的出生日期。
+     * @returns {number} 年齡。
+     */
+    function calculateAge(birthDateString) {
+        const today = new Date();
+        const birthDate = new Date(birthDateString);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        // 如果月份差小於0，或月份相同但日期未到，則年齡減一
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    /**
+     * Renders the chat history messages.
+     */
+    function renderChatHistory() {
+        chatMessages.innerHTML = '';
+        if (chatHistory.length === 0) {
+            chatMessages.innerHTML = '<p class="text-sm text-gray-500 text-center">在此與您的 AI 顧問進行對話...</p>';
+            return;
+        }
+
+        chatHistory.forEach(message => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('p-3', 'max-w-4/5', 'break-words', 'text-sm');
+            messageElement.innerHTML = message.parts[0].text.replace(/\n/g, '<br>'); // Use innerHTML to handle line breaks
             
-            const today = new Date();
-            const birth = new Date(birthdate);
-            let age = today.getFullYear() - birth.getFullYear();
-            if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
-            
-            const categoryTitle = age > 20 ? '事業運與發展策略' : '學業運與學習策略';
-            
-            const report = `# 紫微斗數命盤解析報告（專業版）
+            if (message.role === 'user') {
+                messageElement.classList.add('chat-user-message', 'ml-auto');
+            } else {
+                messageElement.classList.add('chat-model-message', 'mr-auto');
+            }
+            chatMessages.appendChild(messageElement);
+        });
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+    }
+
+    /**
+     * Exponential backoff utility for API calls.
+     * @param {Function} fn - The function to retry.
+     * @param {number} retries - Number of retries remaining.
+     */
+    async function withExponentialBackoff(fn, retries = 5) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                return await fn();
+            } catch (error) {
+                if (i === retries - 1) {
+                    throw error;
+                }
+                const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+    }
+
+    /**
+     * Simulates fetching the analysis report from the Gemini API (Main Report).
+     */
+    async function fetchAnalysis(data, age) {
+        const { birthDate, birthTime, gender, birthPlace } = data;
+
+        // 根據年齡決定第四項標題和分析重點
+        const isAdult = age > 20;
+        const dynamicHeader4 = isAdult 
+            ? "## 四、事業運與發展策略" 
+            : "## 四、學業運與學習策略";
+        
+        const focusArea = isAdult ? "事業運與發展策略" : "學業運與學習策略";
+        const childrenNote = isAdult 
+            ? "請分析子女緣分、數量、與教養建議。如果命盤顯示無子女緣，也請說明。"
+            : "請著重於未來子女緣分的預測，並給予對未來教養觀念的建議。";
+
+        // System Prompt for the Main Report
+        const systemPrompt = `擔任一位融合傳統紫微斗數命理師與現代人文顧問思維的專家。你的報告必須：
+1. 兼顧理性結構與象徵意涵，但所有分析必須聽起來像是由專業命理師和顧問所生成。
+2. 文字風格自然、具說服力，避免艱澀術語，並使用現代、務實的語氣。
+3. 嚴格遵循使用者提供的七大標題結構輸出 Markdown 內容，不得增減或修改標題，且必須以繁體中文撰寫。
+4. 提供務實、具體的行動建議。`;
+
+        // User Query for the Main Report
+        const userQuery = `請根據以下使用者資訊，撰寫一份完整的多層次紫微斗數命盤解析報告。
+
+**重點要求與情境設定：**
+1. 該使用者年齡為 ${age} 歲。
+2. 報告必須包含對 2026年整體運勢、未來十年父母與子女關係、${focusArea}、朋友運和金錢運勢的深入分析。
+3. **第三大項（父母與子女關係）：** 分析必須涵蓋父母關係，並針對子女關係的部分，請遵循以下指導：${childrenNote}
+4. **第四大項（學業/事業）：** 由於使用者年齡為 ${age} 歲，請務必著重分析 ${focusArea}。
+
+**使用者數據：**
+1. 出生日期（西元）：${birthDate}
+2. 出生時間：${birthTime}
+3. 性別：${gender === 'male' ? '男' : '女'}
+4. 出生地：${birthPlace}
+
+**請嚴格按照以下七大標題結構輸出報告內容：**
+# 紫微斗數命盤解析報告（專業版）
 
 ## 一、命格基底與性格核心
 
-您於${birthdate}在${birthplace}出生，現年${age}歲。根據您的命盤，您擁有沉著、理性、責任感強的性格特質。您善於分析問題，具有卓越的邏輯能力，但有時可能過度謹慎。
-
-**性格優勢：** 意志堅定、持之以恆、高度自律、分析能力強
-
-**建議改進：** 增加靈活性、嘗試新事物、平衡工作與生活
-
-## 二、2026年整體運勢
-
-2026年是轉折之年，上半年穩定蓄積，下半年新機遇浮現。整體運勢向好，適合策劃長期計畫。
-
-**運勢特徵：**
-- 上半年：穩定中有轉變，適合鞏固基礎
-- 下半年：機會增多，需把握決策時機
-
-**行動建議：** 上半年專注穩定工作/學業；下半年保持警覺，評估後果敢把握機會。全年保持健康作息。
+## 二、2026 年整體運勢
 
 ## 三、未來十年父母與子女關係
 
-### 父母關係
-關係逐步和諧化，溝通會更順暢。未來十年應主動表達關心，定期交流。
-
-**行動建議：** 定期與父母溝通，參加家庭活動，給予適度陪伴。
-
-### 子女關係
-若已有或計畫生育，子女將帶來幸福與成長。教育與陪伴是關鍵。
-
-## 四、${categoryTitle}
-
-${age > 20 ? `
-### 事業發展方向
-根據命盤分析，您適合需要持久專注與精細分析的工作。建議朝著專業領域深化發展。
-
-### 近期職場建議
-- 增強與團隊的溝通
-- 展現個人專業優勢
-- 為未來3年做好規劃
-
-**行動計畫：** 制定明確的職業目標，每季度檢視進度，積極參與職業發展培訓。
-` : `
-### 學習策略
-您的學習能力強，適合系統性、循序漸進的學習方式。建議專注於興趣領域深化。
-
-### 考試與升學建議
-- 制定詳細的讀書計畫
-- 定期複習鞏固基礎
-- 保持心理穩定
-
-**行動計畫：** 每天安排集中學習時間，定期進度測試，必要時尋求老師指導。
-`}
+${dynamicHeader4}
 
 ## 五、朋友運與同儕關係
 
-您的交友品質高，但圈子相對穩定。建議適度拓展人脈，同時深化現有重要關係。
-
-**建議行動：** 
-- 主動參加社交活動
-- 定期與親密朋友聯繫
-- 在共同興趣中結識新朋友
-
 ## 六、金錢運與財務趨勢
 
-財運穩定，適合穩健投資。未來十年收入會逐步提升，需做好資產規劃。
+## 七、整體建議與開運行動`;
 
-**財務建議：**
-- 建立應急基金
-- 謹慎投資，避免高風險
-- 制定長期儲蓄計畫
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+        };
 
-## 七、整體建議與開運行動
+        const fetchFn = async () => {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-### 核心發展方向
-1. **強化專業能力**：深化現有領域專長
-2. **平衡工作生活**：避免過度工作導致身心失衡
-3. **人脈拓展**：建立更廣泛的優質人際網絡
-4. **財務規劃**：制定10年財務目標
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`API Request failed with status ${response.status}: ${errorBody}`);
+            }
 
-### 開運建議
-- 定期運動，保持身心健康
-- 保持積極樂觀的心態
-- 主動學習，與時俱進
-- 感恩身邊的人和事
+            const result = await response.json();
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
-### 2026年重點行動
-✓ 上半年制定職業/學業5年計畫
-✓ 下半年抓住出現的重要機遇
-✓ 全年投資自我提升
-✓ 建立健康的生活作息
+            if (!text) {
+                throw new Error("API returned an empty or malformed response.");
+            }
+            return text;
+        };
 
-**
+        return withExponentialBackoff(fetchFn);
+    }
+
+    /**
+     * Simulates fetching a chat response from the Gemini API (Q&A Feature).
+     */
+    async function fetchChatResponse(userMessage, profileData) {
+        const { birthDate, birthTime, gender, birthPlace, age } = profileData;
+        
+        // System Prompt for Chat (maintaining persona and context)
+        const systemPrompt = `你是一位紫微斗數命理師與現代人文顧問。你的任務是根據使用者提供的命盤資訊（出生日期：${birthDate}，時間：${birthTime}，性別：${gender === 'male' ? '男' : '女'}，出生地：${birthPlace}，目前年齡：${age} 歲），以專業、清晰且務實的語氣，回答他們關於命盤、運勢或個人發展的追問。你的回答應簡潔、有洞察力，避免使用過於深奧的命理術語，並且必須以繁體中文撰寫。`;
+
+        // The chat history passed to the API includes the new user message
+        const conversation = [
+            { role: "user", parts: [{ text: userMessage }] }
+        ];
+
+        const payload = {
+            contents: conversation,
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+        };
+
+        const fetchFn = async () => {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`Chat API Request failed with status ${response.status}: ${errorBody}`);
+            }
+
+            const result = await response.json();
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (!text) {
+                throw new Error("Chat API returned an empty or malformed response.");
+            }
+            return text;
+        };
+
+        return withExponentialBackoff(fetchFn);
+    }
+
+    /**
+     * Handles the analysis process from button click.
+     */
+    async function handleAnalyze() {
+        // 1. Gather Input
+        const birthDate = document.getElementById('birthDate').value;
+        const birthTime = document.getElementById('birthTime').value;
+        const gender = document.getElementById('gender').value;
+        const birthPlace = document.getElementById('birthPlace').value.trim();
+
+        if (!birthDate || !birthTime || !gender || !birthPlace) {
+            showError('請填寫所有欄位以進行分析。');
+            return;
+        }
+
+        // Calculate age for dynamic analysis focus
+        const age = calculateAge(birthDate);
+
+        // 2. Set UI to Loading State
+        button.disabled = true;
+        button.textContent = '生成中...';
+        loadingIndicator.classList.remove('hidden');
+        reportOutput.classList.add('hidden');
+        errorMessage.classList.add('hidden');
+        qaFeature.classList.add('hidden'); // Hide Q&A during initial analysis
+        reportOutput.innerHTML = '<div class="text-center py-10"><div class="loader mx-auto"></div><p class="mt-4 text-gray-500">正在深度解讀命盤...</p></div>';
+
+        const data = { birthDate, birthTime, gender, birthPlace };
+
+        try {
+            // 3. Fetch Analysis (Simulated Calculation via Gemini API)
+            const markdownReport = await fetchAnalysis(data, age);
+
+            // 4. Render Report
+            renderReport(markdownReport);
+            reportOutput.classList.remove('hidden');
+
+            // 5. Initialize Q&A feature
+            currentProfileData = { ...data, age }; // Store all data including age
+            qaFeature.classList.remove('hidden');
+            chatInput.disabled = false;
+            chatSendButton.disabled = false;
+            chatHistory = [
+                { role: "model", parts: [{ text: "您好，命盤分析報告已生成。請問您對報告中的任何部分有進一步的疑問嗎？或者想詢問其他關於您命盤的建議？" }] }
+            ];
+            renderChatHistory();
+
+
+        } catch (error) {
+            console.error('分析失敗:', error);
+            showError('分析報告生成失敗。請檢查您的網路連線或稍後再試。');
+            reportOutput.classList.add('hidden');
+
+        } finally {
+            // 6. Reset UI State
+            button.disabled = false;
+            button.textContent = '重新生成報告';
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+
+    /**
+     * Handles the quick query chat feature (New LLM feature).
+     */
+    async function handleQuickQuery() {
+        const userMessage = chatInput.value.trim();
+        if (!userMessage || !currentProfileData) {
+            chatError.textContent = '請輸入您的問題。';
+            chatError.classList.remove('hidden');
+            return;
+        }
+        chatError.classList.add('hidden');
+        
+        // 1. Add user message to history and render
+        chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+        renderChatHistory();
+        chatInput.value = '';
+
+        // 2. Disable input/button during API call
+        chatInput.disabled = true;
+        chatSendButton.disabled = true;
+        chatSendButton.textContent = '發送中...';
+
+        try {
+            // 3. Fetch chat response
+            const modelResponse = await fetchChatResponse(userMessage, currentProfileData);
+
+            // 4. Add model response to history and render
+            chatHistory.push({ role: "model", parts: [{ text: modelResponse }] });
+            renderChatHistory();
+
+        } catch (error) {
+            console.error('快速問答失敗:', error);
+            chatError.textContent = '問答功能暫時無法使用，請稍後再試。';
+            chatError.classList.remove('hidden');
+            
+            // Note: We deliberately don't remove the user message here for simplicity in this single-turn chat design
+        } finally {
+            // 5. Re-enable input/button
+            chatInput.disabled = false;
+            chatSendButton.disabled = false;
+            chatSendButton.textContent = '發送';
+            chatInput.focus();
+        }
+    }
+
+    /**
+     * Displays an error message.
+     * @param {string} message - The error message.
+     */
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.remove('hidden');
+    }
+
+    /**
+     * Renders the markdown report content in the output div.
+     * This is a simple markdown-to-HTML conversion focusing on the required headers.
+     * @param {string} markdown - The markdown content from the API.
+     */
+    function renderReport(markdown) {
+        // Simple conversion for the expected structure
+        let htmlContent = markdown;
+
+        // Replace H1 and H2 headers with appropriate HTML structure
+        htmlContent = htmlContent.replace(/# (.+)/g, '<h1>$1</h1>');
+        htmlContent = htmlContent.replace(/## (.+)/g, '<h2>$1</h2>');
+
+        // Basic formatting (paragraphs, line breaks)
+        htmlContent = htmlContent.replace(/\n\n/g, '</p><p>');
+        htmlContent = htmlContent.replace(/\n/g, '<br>');
+        htmlContent = `<p>${htmlContent}</p>`;
+        
+        // Use a DOM element for safe rendering
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContent;
+
+        // Apply specific styles/classes for readability (e.g., strong/bold)
+        tempDiv.innerHTML = tempDiv.innerHTML.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        reportOutput.innerHTML = tempDiv.innerHTML;
+    }
+</script>
