@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紫微斗數命盤解析報告生成系統</title>
+    
+    <!-- CDN: Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CDN: Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CDN: html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; }
+        .hero-section { background: linear-gradient(rgba(26,26,46,0.85), rgba(22,33,62,0.85)), url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&h=400&fit=crop') center/cover; color: white; padding: 60px 20px; text-align: center; }
+        .hero-section h1 { font-size: 3em; font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+        .hero-section p { font-size: 1.3em; color: #d4af37; text-shadow: 1px 1px 4px rgba(0,0,0,0.5); }
+        .main-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .form-section, .report-section { background: white; border-radius: 15px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 40px; }
+        .form-section h2 { color: #1a1a2e; margin-bottom: 30px; font-weight: 700; font-size: 1.8em; }
+        .form-group label { font-weight: 600; color: #16213e; margin-bottom: 8px; }
+        .form-group input, .form-group select { border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px 15px; width: 100%; }
+        .form-group input:focus, .form-group select:focus { border-color: #d4af37; box-shadow: 0 0 10px rgba(212,175,55,0.3); }
+        .btn-generate { background: linear-gradient(135deg, #d4af37 0%, #c19a1a 100%); color: #1a1a2e; border: none; padding: 14px 40px; font-weight: 700; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 20px; }
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(212,175,55,0.4); }
+        .report-section { display: none; }
+        .report-section.active { display: block; }
+        .report-section h1 { color: #1a1a2e; border-bottom: 4px solid #d4af37; padding-bottom: 15px; margin-bottom: 30px; font-size: 2.2em; }
+        .report-section h2 { color: #16213e; margin-top: 30px; margin-bottom: 15px; font-size: 1.6em; padding-left: 15px; border-left: 4px solid #d4af37; }
+        .report-section p { color: #555; line-height: 1.8; margin-bottom: 15px; }
+        .action-box { background: linear-gradient(135deg, #f8f9ff 0%, #f0f0f5 100%); border-left: 4px solid #d4af37; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .btn-export { background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); color: #d4af37; border: none; padding: 12px 30px; font-weight: 700; border-radius: 8px; cursor: pointer; margin-top: 30px; margin-right: 10px; }
+        .btn-export:hover { color: #f0f0f5; transform: translateY(-2px); }
+        .info-section { background: linear-gradient(rgba(26,26,46,0.9), rgba(15,52,96,0.9)), url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=300&fit=crop') center/cover; color: white; padding: 50px 20px; text-align: center; margin: 40px 0; border-radius: 15px; }
+        .info-section h3 { color: #d4af37; font-size: 2em; margin-bottom: 20px; }
+        @media (max-width: 768px) { .hero-section h1 { font-size: 2em; } .form-section, .report-section { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <h1><i class="fas fa-moon"></i> 紫微斗數命盤解析</h1>
+        <p>融合古老智慧與現代洞察的生命指南</p>
+    </div>
+    
+    <div class="main-container">
+        <div class="form-section">
+            <h2><i class="fas fa-star"></i> 輸入您的命盤資訊</h2>
+            <form id="ziwei-form">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label for="birthdate"><i class="fas fa-calendar"></i> 出生日期</label>
+                            <input type="date" id="birthdate" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label for="birthtime"><i class="fas fa-clock"></i> 出生時間</label>
+                            <input type="time" id="birthtime" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label for="gender"><i class="fas fa-user"></i> 性別</label>
+                            <select id="gender" class="form-control" required>
+                                <option value="">請選擇</option>
+                                <option value="male">男</option>
+                                <option value="female">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label for="birthplace"><i class="fas fa-map-marker-alt"></i> 出生地</label>
+                            <input type="text" id="birthplace" class="form-control" placeholder="城市/地點" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-generate"><i class="fas fa-magic"></i> 生成命盤分析報告</button>
+            </form>
+        </div>
+        
+        <div class="info-section">
+            <h3><i class="fas fa-lightbulb"></i> 關於紫微斗數</h3>
+            <p>紫微斗數是中國傳統命理學的重要分支，透過精細的數理分析揭示生命各層面。本系統融合傳統智慧與現代人文視角，提供兼具洞察力與可執行性的建議。</p>
+        </div>
+        
+        <div class="report-section" id="report-container">
+            <div id="report-content"></div>
+            <button class="btn-export" onclick="exportToPDF()"><i class="fas fa-download"></i> 下載PDF</button>
+            <button class="btn-export" onclick="copyToClipboard()"><i class="fas fa-copy"></i> 複製報告</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('ziwei-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const birthdate = document.getElementById('birthdate').value;
+            const birthtime = document.getElementById('birthtime').value;
+            const gender = document.getElementById('gender').value;
+            const birthplace = document.getElementById('birthplace').value;
+            
+            const today = new Date();
+            const birth = new Date(birthdate);
+            let age = today.getFullYear() - birth.getFullYear();
+            if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
+            
+            const categoryTitle = age > 20 ? '事業運與發展策略' : '學業運與學習策略';
+            
+            const report = `# 紫微斗數命盤解析報告（專業版）
+
+## 一、命格基底與性格核心
+
+您於${birthdate}在${birthplace}出生，現年${age}歲。根據您的命盤，您擁有沉著、理性、責任感強的性格特質。您善於分析問題，具有卓越的邏輯能力，但有時可能過度謹慎。
+
+**性格優勢：** 意志堅定、持之以恆、高度自律、分析能力強
+
+**建議改進：** 增加靈活性、嘗試新事物、平衡工作與生活
+
+## 二、2026年整體運勢
+
+2026年是轉折之年，上半年穩定蓄積，下半年新機遇浮現。整體運勢向好，適合策劃長期計畫。
+
+**運勢特徵：**
+- 上半年：穩定中有轉變，適合鞏固基礎
+- 下半年：機會增多，需把握決策時機
+
+**行動建議：** 上半年專注穩定工作/學業；下半年保持警覺，評估後果敢把握機會。全年保持健康作息。
+
+## 三、未來十年父母與子女關係
+
+### 父母關係
+關係逐步和諧化，溝通會更順暢。未來十年應主動表達關心，定期交流。
+
+**行動建議：** 定期與父母溝通，參加家庭活動，給予適度陪伴。
+
+### 子女關係
+若已有或計畫生育，子女將帶來幸福與成長。教育與陪伴是關鍵。
+
+## 四、${categoryTitle}
+
+${age > 20 ? `
+### 事業發展方向
+根據命盤分析，您適合需要持久專注與精細分析的工作。建議朝著專業領域深化發展。
+
+### 近期職場建議
+- 增強與團隊的溝通
+- 展現個人專業優勢
+- 為未來3年做好規劃
+
+**行動計畫：** 制定明確的職業目標，每季度檢視進度，積極參與職業發展培訓。
+` : `
+### 學習策略
+您的學習能力強，適合系統性、循序漸進的學習方式。建議專注於興趣領域深化。
+
+### 考試與升學建議
+- 制定詳細的讀書計畫
+- 定期複習鞏固基礎
+- 保持心理穩定
+
+**行動計畫：** 每天安排集中學習時間，定期進度測試，必要時尋求老師指導。
+`}
+
+## 五、朋友運與同儕關係
+
+您的交友品質高，但圈子相對穩定。建議適度拓展人脈，同時深化現有重要關係。
+
+**建議行動：** 
+- 主動參加社交活動
+- 定期與親密朋友聯繫
+- 在共同興趣中結識新朋友
+
+## 六、金錢運與財務趨勢
+
+財運穩定，適合穩健投資。未來十年收入會逐步提升，需做好資產規劃。
+
+**財務建議：**
+- 建立應急基金
+- 謹慎投資，避免高風險
+- 制定長期儲蓄計畫
+
+## 七、整體建議與開運行動
+
+### 核心發展方向
+1. **強化專業能力**：深化現有領域專長
+2. **平衡工作生活**：避免過度工作導致身心失衡
+3. **人脈拓展**：建立更廣泛的優質人際網絡
+4. **財務規劃**：制定10年財務目標
+
+### 開運建議
+- 定期運動，保持身心健康
+- 保持積極樂觀的心態
+- 主動學習，與時俱進
+- 感恩身邊的人和事
+
+### 2026年重點行動
+✓ 上半年制定職業/學業5年計畫
+✓ 下半年抓住出現的重要機遇
+✓ 全年投資自我提升
+✓ 建立健康的生活作息
+
+**
