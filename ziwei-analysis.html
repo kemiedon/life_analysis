@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紫微斗數命盤解析報告生成系統</title>
+    
+    <!-- CDN: Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CDN: Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CDN: html2pdf for export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(26, 26, 46, 0.85), rgba(22, 33, 62, 0.85)),
+                        url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&h=400&fit=crop') center/cover;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .hero-section h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+        
+        .hero-section p {
+            font-size: 1.3em;
+            color: #d4af37;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+        
+        .form-section h2 {
+            color: #1a1a2e;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #16213e;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 15px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-generate {
+            background: linear-gradient(135deg, #d4af37 0%, #c19a1a 100%);
+            color: #1a1a2e;
+            border: none;
+            padding: 14px 40px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        .report-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        
+        .report-section.active {
+            display: block;
+        }
+        
+        .report-section h1 {
+            color: #1a1a2e;
+            border-bottom: 4px solid #d4af37;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        
+        .report-section h2 {
+            color: #16213e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+        
+        .report-section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .action-box {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f0f5 100%);
+            border-left: 4px solid #d4af37;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+        
+        .btn-export {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            color: #d4af37;
+            border: none;
+            padding: 12px 30px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 30px;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-export:hover {
+            color: #f0f0f5;
+            transform: translateY(-2px);
+        }
+        
+        .info-section {
+            background: linear-gradient(rgba(26, 26, 46, 0.9), rgba(15, 52, 96, 0.9)),
+                        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=300&fit=crop') center/cover;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 40px 0;
+            border-radius: 15px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #d4af37;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        .spinner.active { display: block; }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 2em; }
+            .form-section, .report-section { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <h1><i class="fas fa-moon"></i> 紫微斗數命盤解析</h1>
+        <p>融合古老智慧與現代洞察的生命指南</p>
+    </div>
+    
+    <div class="main-container">
+        <div class="form-section">
+            <h2><i class="fas fa-star"></i> 輸入您的命盤資訊</h2>
+            <form id="ziwei-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="birthdate"><i class="fas fa-calendar"></i> 出生日期 (西元)</label>
+                            <input type="date" id="birthdate" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="birthtime"><i class="fas fa-clock"></i> 出生時間</label>
+                            <input type="time" id="birthtime" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="gender"><i class="fas fa-user"></i> 性別</label>
+                            <select id="gender" class="form-control" required>
+                                <option value="">請選擇</option>
+                                <option value="male">男</option>
+                                <option value="female">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="birthplace"><i class="fas fa-map-marker-alt"></i> 出生地</label>
+                            <input type="text" id="birthplace" class="form-control" placeholder="城市/地點" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-generate">
+                    <i class="fas fa-magic"></i> 生成命盤分析報告
+                </button>
+            </form>
+        </div>
+        
+        <div class="spinner" id="loading-spinner"></div>
+        
+        <div class="info-section">
+            <h3><i class="fas fa-lightbulb"></i> 關於紫微斗數</h3>
+            <p>紫微斗數是中國傳統命理學的重要分支，透過精細的數理分析，揭示生命的各個層面。本系統融合傳統智慧與現代人文視角，提供兼具洞察力與可執行性的生活建議。</p>
+        </div>
+        
+        <div class="report-section" id="report-container">
+            <div id="report-content"></div>
+            <button class="btn-export" onclick="exportToPDF()"><i class="fas fa-download"></i> 下載PDF</button>
+            <button class="btn-export" onclick="copyToClipboard()"><i class="fas fa-copy"></i> 複製報告</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        class ZiweiAnalyzer {
+            constructor(birthdate, birthtime, gender, birthplace) {
+                this.birthdate = new Date(birthdate);
+                this.birthtime = birthtime;
+                this.gender = gender;
+                this.birthplace = birthplace;
+                this.age = this.calculateAge();
+                this.currentYear = new Date().getFullYear();
+            }
+            
+            calculateAge() {
+                const today = new Date();
+                let age = today.getFullYear() - this.birthdate.getFullYear();
+                const monthDiff = today.getMonth() - this.birthdate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < this.birthdate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+            
+            generateReport() {
+                const categoryTitle = this.age > 20 ? '事業運與發展策略' : '學業運與學習策略';
+                const categoryType = this.age > 20 ? 'career' : 'study';
+                
+                const report = `
+# 紫微斗數命盤解析報告（專業版）
+
+## 一、命格基底與性格核心
+
+根據您 ${this.birthdate.toLocaleDateString('zh-TW')} 於 ${this.birthtime} 在 ${this.birthplace} 出生的命盤資訊，您的性格具有以下核心特徵：
+
+您是一位思慮周密、謹慎內斂的個體。您擁有強烈的責任感和目標導向，對人生有清晰的藍圖。您偏好深度思考，善於分析問題的本質，具有卓越的邏輯能力。
+
+在人際互動中，您展現出成熟穩重的風範，但有時會因過度謹慎而顯得保守。您最大的優勢是持之以恆的毅力和高度的自律性，這是成功的堅實基礎。
+
+**行動建議：** 定期進行自我反思，嘗試在安全感之外探索新的可能性。保持初心，同時培養更多的靈活性，這將使您的人生更加豐富多彩。
+
+## 二、2026 年整體運勢
+
+2026年是您重要的轉折年份。在這一年中，您將經歷明顯的能量轉變，這是調整方向、深化成長的絕佳時機。
+
+**運勢特徵：**
+- 上半年（1-6月）：穩定中有小波瀾，適合鞏固基礎、蓄積力量
+- 下半年（7-12月）：新機遇浮現，需要果敢決策與行動
+
+總體而言，這是充滿希望的一年。若能妥善把握，將為未來三年奠定良好基礎。
+
+**行動建議：** 
+- 上半年專注於穩定工作/學業，建立更堅實的基礎
+- 下半年保持警覺，對出現的新機會進行充分評估後果敢把握
+- 全年保持健康的生活作息，養護身心
+
+## 三、未來十年父母與子女關係
+
+### 與父母的關係（未來十年動態）
+
+您與父母的關係處於逐步和諧化的軌跡。未來
