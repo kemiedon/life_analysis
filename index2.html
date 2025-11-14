@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>紫微斗數命盤生成分析</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"><\/script>
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"><\/script>
+  <!-- Unsplash 主圖-->
+  <link rel="preload" href="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80" as="image">
+  <link rel="stylesheet" href="index2.css">
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-indigo-900 to-gray-900 min-h-screen text-gray-100 font-sans relative">
+
+  <!-- 主視覺區 -->
+  <section class="relative overflow-hidden h-64 flex items-center justify-center mb-8">
+    <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80" alt="Mystic Unsplash" class="absolute w-full h-full object-cover opacity-30 z-0">
+    <div class="z-10 text-center">
+      <i class="fas fa-star fa-2x text-yellow-400"><\/i>
+      <h1 class="text-4xl font-bold tracking-wider text-gold">紫微斗數命盤解析<\/h1>
+      <p class="mt-2 text-base text-gray-200">神祕・高級・專業<\/p>
+    <\/div>
+  <\/section>
+
+  <!-- 資料輸入表單區 -->
+  <section class="max-w-lg mx-auto bg-black bg-opacity-50 p-8 rounded-lg shadow-lg border-2 border-indigo-900 mb-10">
+    <h2 class="text-xl font-semibold text-gold mb-4"><i class="fas fa-user-astronaut"><\/i> 基本資料輸入<\/h2>
+    <form id="chartForm" class="space-y-4">
+      <input type="text" name="name" required placeholder="姓名" class="w-full px-4 py-2 rounded bg-gray-800 text-gray-200 border-gold">
+      <select name="gender" class="w-full px-4 py-2 rounded bg-gray-800 text-gray-200">
+        <option value="" disabled selected>性別<\/option>
+        <option value="male">男<\/option>
+        <option value="female">女<\/option>
+      <\/select>
+      <input type="date" name="birthdate" required class="w-full px-4 py-2 rounded bg-gray-800 text-gray-200">
+      <input type="time" name="birthtime" required class="w-full px-4 py-2 rounded bg-gray-800 text-gray-200">
+      <input type="text" name="birthplace" required placeholder="出生地點" class="w-full px-4 py-2 rounded bg-gray-800 text-gray-200">
+      <button type="submit" class="w-full py-2 bg-gold text-black font-bold rounded mt-2 transition hover:bg-indigo-700 hover:text-yellow-300">生成命盤<\/button>
+    <\/form>
+  <\/section>
+
+  <!-- 命盤與報告結果區 -->
+  <div id="resultZone" class="max-w-4xl mx-auto p-8 rounded-lg bg-gradient-to-tr from-indigo-900 via-black to-purple-900 border border-gray-800 drop-shadow-lg mb-10" style="display:none;">
+    <h2 class="text-2xl font-bold text-gold mb-2">紫微斗數命盤<\/h2>
+    <div id="chartGrid" class="grid grid-cols-4 grid-rows-3 gap-2 mb-6"><\/div>
+    <h3 class="text-xl font-semibold text-gold mt-8 mb-2">完整解析報告<\/h3>
+    <div id="fullReport"><\/div>
+  <\/div>
+
+  <!-- 幾何星空底紋、浮動圖標裝飾 -->
+  <div class="absolute inset-0 pointer-events-none z-0">
+    <svg class="w-full h-full" viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="320" cy="240" r="180" fill="url(#grad)" opacity="0.15"/>
+      <defs>
+        <radialGradient id="grad" cx="0.5" cy="0.5" r="0.5">
+          <stop stop-color="#4527A0"/>
+          <stop offset="1" stop-color="#000"/>
+        <\/radialGradient>
+      <\/defs>
+    <\/svg>
+  <\/div>
+
+  <script src="index2.js"><\/script>
+<\/body>
+<\/html>
